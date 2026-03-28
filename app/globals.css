@@ -94,6 +94,20 @@ h1 {
 
 @keyframes pulse { 0%,100% { opacity:1 } 50% { opacity:0.4 } }
 
+.action-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  padding: 6px 14px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: border-color 0.15s, color 0.15s;
+}
+.action-btn:hover { border-color: var(--gold); color: var(--gold); }
+
 .reset-btn {
   background: transparent;
   border: 1px solid var(--border);

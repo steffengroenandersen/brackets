@@ -35,6 +35,16 @@ export default function Bracket() {
     update({ seeds: shuffleTeams(), winners: {}, maps: randomMaps() });
   }
 
+  function reshuffleMaps() {
+    if (!state) return;
+    update({ ...state, maps: randomMaps() });
+  }
+
+  function reshufflePlayers() {
+    if (!confirm('Re-randomize player seedings? This will clear all results.')) return;
+    update({ seeds: shuffleTeams(), winners: {}, maps: state?.maps ?? randomMaps() });
+  }
+
   function pick(matchId: MatchId, team: string) {
     if (!state) return;
     const next: BracketState = {
@@ -92,6 +102,8 @@ export default function Bracket() {
           </div>
         </div>
         <div className="header-right">
+          <button className="action-btn" onClick={reshuffleMaps}>Randomize Maps</button>
+          <button className="action-btn" onClick={reshufflePlayers}>Randomize Players</button>
           <button className="reset-btn" onClick={reset}>Reset</button>
         </div>
       </header>
