@@ -1,42 +1,38 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { BracketState, MATCHES, MatchId } from '@/lib/bracket';
+import { useEffect, useState } from 'react';
+import { BracketState, MATCHES, MatchId, shuffleTeams } from '@/lib/bracket';
 import MatchCard from './MatchCard';
 
-export default function Bracket() {
-  const [state, setStateLocal] = useState<BracketState | null>(null);
-  const [saving, setSaving] = useState(false);
-  const pollRef = useRef<NodeJS.Timeout | null>(null);
+const LS_KEY = 'cs2_bracket';
 
-  async function load() {
-    const res = await fetch('/api/bracket');
-    const data = await res.json();
-    setStateLocal(data);
-  }
+function loadState(): BracketState {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch {}
+  return { seeds: shuffleTeams(), winners: {} };
+}
+
+function saveState(s: BracketState) {
+  localStorage.setItem(LS_KEY, JSON.stringify(s));
+}
+
+export default function Bracket() {
+  const [state, setState] = useState<BracketState | null>(null);
 
   useEffect(() => {
-    load();
-    pollRef.current = setInterval(load, 5000);
-    return () => { if (pollRef.current) clearInterval(pollRef.current); };
+    setState(loadState());
   }, []);
 
-  async function save(next: BracketState) {
-    setStateLocal(next);
-    setSaving(true);
-    await fetch('/api/bracket', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(next),
-    });
-    setSaving(false);
+  function update(next: BracketState) {
+    setState(next);
+    saveState(next);
   }
 
-  async function reset() {
+  function reset() {
     if (!confirm('Reset the entire bracket?')) return;
-    const res = await fetch('/api/bracket', { method: 'DELETE' });
-    const data = await res.json();
-    setStateLocal(data);
+    update({ seeds: shuffleTeams(), winners: {} });
   }
 
   function pick(matchId: MatchId, team: string) {
@@ -46,7 +42,6 @@ export default function Bracket() {
       winners: { ...state.winners, [matchId]: team },
     };
 
-    // Clear downstream winners that may now be invalid
     const downstream: Partial<Record<MatchId, MatchId[]>> = {
       r1m1: ['qf3', 'sf2', 'final'],
       r1m2: ['qf2', 'sf2', 'final'],
@@ -59,39 +54,30 @@ export default function Bracket() {
       sf2: ['final'],
     };
 
-    const toClear = downstream[matchId] ?? [];
-
-    // For each downstream match, check if its current winner is still a valid participant
-    for (const mid of toClear) {
-      const match = MATCHES.find(m => m.id === mid);
-      if (!match) continue;
-      const newT1 = match.getTeam1(next);
-      const newT2 = match.getTeam2(next);
-      const currentWinner = next.winners[mid];
-      if (currentWinner && currentWinner !== newT1 && currentWinner !== newT2) {
-        delete next.winners[mid];
-      }
+    for (const mid of downstream[matchId] ?? []) {
+      const match = MATCHES.find(m => m.id === mid)!;
+      const t1 = match.getTeam1(next);
+      const t2 = match.getTeam2(next);
+      const w = next.winners[mid];
+      if (w && w !== t1 && w !== t2) delete next.winners[mid];
     }
 
-    save(next);
+    update(next);
   }
 
-  if (!state) {
-    return <div className="loading">Loading bracket...</div>;
-  }
+  if (!state) return <div className="loading">Loading bracket...</div>;
 
   const rounds = [
-    { label: 'Play-in', ids: ['r1m1', 'r1m2', 'r1m3'] as MatchId[] },
+    { label: 'Play-in',      ids: ['r1m1', 'r1m2', 'r1m3'] as MatchId[] },
     { label: 'Quarterfinals', ids: ['qf1', 'qf2', 'qf3', 'qf4'] as MatchId[] },
-    { label: 'Semifinals', ids: ['sf1', 'sf2'] as MatchId[] },
-    { label: 'Final', ids: ['final'] as MatchId[] },
+    { label: 'Semifinals',   ids: ['sf1', 'sf2'] as MatchId[] },
+    { label: 'Final',        ids: ['final'] as MatchId[] },
   ];
 
   const roundLabels: Record<MatchId, string> = {
     r1m1: 'Match 1', r1m2: 'Match 2', r1m3: 'Match 3',
     qf1: 'QF 1', qf2: 'QF 2', qf3: 'QF 3', qf4: 'QF 4',
-    sf1: 'SF 1', sf2: 'SF 2',
-    final: 'Grand Final',
+    sf1: 'SF 1', sf2: 'SF 2', final: 'Grand Final',
   };
 
   const champion = state.winners['final'];
@@ -107,7 +93,6 @@ export default function Bracket() {
           </div>
         </div>
         <div className="header-right">
-          {saving && <span className="saving-badge">Saving…</span>}
           <button className="reset-btn" onClick={reset}>Reset</button>
         </div>
       </header>
