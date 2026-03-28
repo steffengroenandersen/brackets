@@ -283,6 +283,100 @@ h1 {
   font-size: 0.72rem;
 }
 
+/* ── Control Panel ───────────────────────────────── */
+.control-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+.control-hint {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  margin-bottom: 12px;
+  letter-spacing: 0.03em;
+}
+
+.seed-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin-bottom: 6px;
+  cursor: grab;
+  transition: background 0.15s, border-color 0.15s;
+  user-select: none;
+}
+.seed-item:hover { border-color: var(--gold); background: var(--surface2); }
+.seed-item.dragging { opacity: 0.4; cursor: grabbing; }
+
+.seed-num {
+  font-size: 0.7rem;
+  color: var(--gold);
+  font-weight: 700;
+  min-width: 28px;
+}
+.seed-name { flex: 1; font-size: 0.9rem; color: var(--text); }
+.drag-handle { color: var(--border); font-size: 1.1rem; }
+
+.control-match {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+
+.control-match-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+  padding: 5px 12px;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+}
+
+.control-match-teams {
+  display: flex;
+  align-items: center;
+  padding: 4px 8px;
+  gap: 8px;
+}
+
+.vs {
+  font-size: 0.65rem;
+  color: var(--border);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  flex-shrink: 0;
+}
+
+.control-team {
+  flex: 1;
+  padding: 8px 10px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text);
+  font-size: 0.85rem;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.control-team:hover:not(:disabled) { background: var(--surface2); border-color: var(--gold); color: var(--gold); }
+.control-team.winner { background: rgba(76,175,110,0.1); border-color: var(--green); color: var(--green); font-weight: 700; }
+.control-team.loser { color: var(--border); border-color: transparent; text-decoration: line-through; }
+.control-team.pending { color: var(--text-dim); font-style: italic; cursor: default; }
+.control-team:disabled { cursor: default; }
+
 /* ── Responsive ──────────────────────────────────── */
 @media (max-width: 768px) {
   .bracket-grid {

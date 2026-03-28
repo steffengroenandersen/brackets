@@ -105,6 +105,7 @@ export default function Bracket() {
           <button className="action-btn" onClick={reshuffleMaps}>Randomize Maps</button>
           <button className="action-btn" onClick={reshufflePlayers}>Randomize Players</button>
           <button className="reset-btn" onClick={reset}>Reset</button>
+          <a href="/control" className="action-btn">Control →</a>
         </div>
       </header>
 
