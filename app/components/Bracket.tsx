@@ -43,9 +43,8 @@ export default function Bracket() {
     };
 
     const downstream: Partial<Record<MatchId, MatchId[]>> = {
-      r1m1: ['qf3', 'sf2', 'final'],
-      r1m2: ['qf2', 'sf2', 'final'],
-      r1m3: ['qf1', 'sf1', 'final'],
+      r1m1: ['qf2', 'sf2', 'final'],
+      r1m2: ['qf1', 'sf1', 'final'],
       qf1: ['sf1', 'final'],
       qf2: ['sf2', 'final'],
       qf3: ['sf2', 'final'],
@@ -68,14 +67,14 @@ export default function Bracket() {
   if (!state) return <div className="loading">Loading bracket...</div>;
 
   const rounds = [
-    { label: 'Play-in',      ids: ['r1m1', 'r1m2', 'r1m3'] as MatchId[] },
+    { label: 'Play-in',      ids: ['r1m1', 'r1m2'] as MatchId[] },
     { label: 'Quarterfinals', ids: ['qf1', 'qf2', 'qf3', 'qf4'] as MatchId[] },
     { label: 'Semifinals',   ids: ['sf1', 'sf2'] as MatchId[] },
     { label: 'Final',        ids: ['final'] as MatchId[] },
   ];
 
   const roundLabels: Record<MatchId, string> = {
-    r1m1: 'Match 1', r1m2: 'Match 2', r1m3: 'Match 3',
+    r1m1: 'Match 1', r1m2: 'Match 2',
     qf1: 'QF 1', qf2: 'QF 2', qf3: 'QF 3', qf4: 'QF 4',
     sf1: 'SF 1', sf2: 'SF 2', final: 'Grand Final',
   };

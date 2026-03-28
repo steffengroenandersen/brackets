@@ -1,7 +1,6 @@
 export const TEAM_NAMES = [
-  'Raed', 'Mikkel', 'Bette', 'Mikkel 2',
-  'Martin', 'Lars', 'Rasmus', 'Chris',
-  'Steffen', 'Sune', 'Dof',
+  'Raed', 'Mikkel', 'Bette Mikkel', 'Martin',
+  'Lars', 'Rasmus', 'Chris', 'Steffen', 'Sune', 'Dof',
 ];
 
 export const ACTIVE_DUTY_MAPS = [
@@ -16,9 +15,9 @@ export interface BracketState {
 }
 
 export type MatchId =
-  | 'r1m1' | 'r1m2' | 'r1m3'
-  | 'qf1' | 'qf2' | 'qf3' | 'qf4'
-  | 'sf1' | 'sf2'
+  | 'r1m1' | 'r1m2'                    // play-in (4 teams, 6 get byes)
+  | 'qf1' | 'qf2' | 'qf3' | 'qf4'     // quarterfinals
+  | 'sf1' | 'sf2'                       // semifinals
   | 'final';
 
 export interface MatchDef {
@@ -36,26 +35,32 @@ function winner(state: BracketState, id: MatchId) {
   return state.winners[id] ?? null;
 }
 
+// 10 teams: seeds 0-5 get byes, seeds 6-9 play in
 export const MATCHES: MatchDef[] = [
-  { id: 'r1m1', round: 0, getTeam1: s => seed(s, 5),  getTeam2: s => seed(s, 10) },
-  { id: 'r1m2', round: 0, getTeam1: s => seed(s, 6),  getTeam2: s => seed(s, 9) },
-  { id: 'r1m3', round: 0, getTeam1: s => seed(s, 7),  getTeam2: s => seed(s, 8) },
-  { id: 'qf1',  round: 1, getTeam1: s => seed(s, 0),  getTeam2: s => winner(s, 'r1m3') },
-  { id: 'qf2',  round: 1, getTeam1: s => seed(s, 1),  getTeam2: s => winner(s, 'r1m2') },
-  { id: 'qf3',  round: 1, getTeam1: s => seed(s, 2),  getTeam2: s => winner(s, 'r1m1') },
-  { id: 'qf4',  round: 1, getTeam1: s => seed(s, 3),  getTeam2: s => seed(s, 4) },
-  { id: 'sf1',  round: 2, getTeam1: s => winner(s, 'qf1'), getTeam2: s => winner(s, 'qf4') },
-  { id: 'sf2',  round: 2, getTeam1: s => winner(s, 'qf2'), getTeam2: s => winner(s, 'qf3') },
-  { id: 'final',round: 3, getTeam1: s => winner(s, 'sf1'), getTeam2: s => winner(s, 'sf2') },
+  // Play-in
+  { id: 'r1m1', round: 0, getTeam1: s => seed(s, 6), getTeam2: s => seed(s, 9) },
+  { id: 'r1m2', round: 0, getTeam1: s => seed(s, 7), getTeam2: s => seed(s, 8) },
+
+  // Quarterfinals
+  { id: 'qf1', round: 1, getTeam1: s => seed(s, 0), getTeam2: s => winner(s, 'r1m2') },
+  { id: 'qf2', round: 1, getTeam1: s => seed(s, 1), getTeam2: s => winner(s, 'r1m1') },
+  { id: 'qf3', round: 1, getTeam1: s => seed(s, 2), getTeam2: s => seed(s, 5) },
+  { id: 'qf4', round: 1, getTeam1: s => seed(s, 3), getTeam2: s => seed(s, 4) },
+
+  // Semifinals
+  { id: 'sf1', round: 2, getTeam1: s => winner(s, 'qf1'), getTeam2: s => winner(s, 'qf4') },
+  { id: 'sf2', round: 2, getTeam1: s => winner(s, 'qf2'), getTeam2: s => winner(s, 'qf3') },
+
+  // Final
+  { id: 'final', round: 3, getTeam1: s => winner(s, 'sf1'), getTeam2: s => winner(s, 'sf2') },
 ];
 
-const ALL_MATCH_IDS: MatchId[] = ['r1m1','r1m2','r1m3','qf1','qf2','qf3','qf4','sf1','sf2','final'];
+const ALL_MATCH_IDS: MatchId[] = ['r1m1','r1m2','qf1','qf2','qf3','qf4','sf1','sf2','final'];
 
 export function randomMaps(): Partial<Record<MatchId, string>> {
   const pool = [...ACTIVE_DUTY_MAPS];
   const result: Partial<Record<MatchId, string>> = {};
   for (const id of ALL_MATCH_IDS) {
-    // Refill pool if exhausted so every match always gets a map
     if (pool.length === 0) pool.push(...ACTIVE_DUTY_MAPS);
     const idx = Math.floor(Math.random() * pool.length);
     result[id] = pool.splice(idx, 1)[0];
