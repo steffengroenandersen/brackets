@@ -284,6 +284,105 @@ h1 {
 }
 
 /* ── Control Panel ───────────────────────────────── */
+.ctrl-layout {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.ctrl-pool {
+  position: sticky;
+  top: 20px;
+}
+
+.pool-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.ctrl-bracket {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+}
+
+.ctrl-round {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 170px;
+  flex: 1;
+}
+
+.ctrl-match {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.ctrl-match-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+  padding: 5px 10px;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+}
+
+.ctrl-divider { height: 1px; background: var(--border); }
+
+.bracket-slot {
+  padding: 6px 8px;
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  transition: background 0.15s;
+  cursor: pointer;
+}
+.bracket-slot:hover:not(.slot-empty):not(.slot-pending) { background: var(--surface2); }
+.bracket-slot.slot-over { background: rgba(240,165,0,0.1); }
+.bracket-slot.slot-winner { background: rgba(76,175,110,0.08); }
+.bracket-slot.slot-loser .player-chip { opacity: 0.35; text-decoration: line-through; }
+.bracket-slot.slot-pending { opacity: 0.5; cursor: default; }
+.slot-tbd { font-size: 0.75rem; color: var(--border); font-style: italic; padding: 0 4px; }
+
+.player-chip {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 5px 10px;
+  font-size: 0.82rem;
+  color: var(--text);
+  cursor: grab;
+  user-select: none;
+  transition: border-color 0.15s, background 0.15s;
+  white-space: nowrap;
+}
+.player-chip:hover { border-color: var(--gold); color: var(--gold); }
+.player-chip.chip-dragging { opacity: 0; }
+.player-chip.chip-dim { opacity: 0.4; }
+.player-chip.chip-overlay {
+  cursor: grabbing;
+  border-color: var(--gold);
+  color: var(--gold);
+  background: var(--surface);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+}
+
+.slot-winner .player-chip {
+  border-color: var(--green);
+  color: var(--green);
+  font-weight: 700;
+}
+
 .control-layout {
   display: grid;
   grid-template-columns: 280px 1fr;
