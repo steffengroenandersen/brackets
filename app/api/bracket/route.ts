@@ -2,10 +2,7 @@ import { Redis } from '@upstash/redis';
 import { NextResponse } from 'next/server';
 import { BracketState, shuffleTeams } from '@/lib/bracket';
 
-const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL!,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
-});
+const redis = Redis.fromEnv();
 
 const KEY = 'bracket_state';
 
