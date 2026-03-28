@@ -176,6 +176,16 @@ h1 {
   padding: 5px 10px;
   background: var(--surface2);
   border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.map-badge {
+  color: var(--gold);
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  font-weight: 600;
 }
 
 .match-divider {

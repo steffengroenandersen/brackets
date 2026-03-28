@@ -8,11 +8,11 @@ interface Props {
   team1: string | null;
   team2: string | null;
   winner: string | null;
+  map: string | undefined;
   onPick: (matchId: MatchId, team: string) => void;
-  locked?: boolean; // teams not yet determined
 }
 
-export default function MatchCard({ id, label, team1, team2, winner, onPick, locked }: Props) {
+export default function MatchCard({ id, label, team1, team2, winner, map, onPick }: Props) {
   const ready = team1 && team2;
 
   const teamClass = (team: string | null) => {
@@ -25,19 +25,22 @@ export default function MatchCard({ id, label, team1, team2, winner, onPick, loc
 
   return (
     <div className="match-card">
-      <div className="match-label">{label}</div>
+      <div className="match-label">
+        <span>{label}</span>
+        {map && <span className="map-badge">{map}</span>}
+      </div>
       <button
         className={teamClass(team1)}
-        onClick={() => team1 && ready && !locked && onPick(id, team1)}
-        disabled={!ready || !!locked}
+        onClick={() => team1 && ready && onPick(id, team1)}
+        disabled={!ready}
       >
         {team1 ?? '—'}
       </button>
       <div className="match-divider" />
       <button
         className={teamClass(team2)}
-        onClick={() => team2 && ready && !locked && onPick(id, team2)}
-        disabled={!ready || !!locked}
+        onClick={() => team2 && ready && onPick(id, team2)}
+        disabled={!ready}
       >
         {team2 ?? '—'}
       </button>

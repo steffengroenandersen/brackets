@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { BracketState, MATCHES, MatchId, shuffleTeams } from '@/lib/bracket';
+import { BracketState, MATCHES, MatchId, shuffleTeams, randomMaps } from '@/lib/bracket';
 import MatchCard from './MatchCard';
 
 const LS_KEY = 'cs2_bracket';
@@ -11,7 +11,7 @@ function loadState(): BracketState {
     const raw = localStorage.getItem(LS_KEY);
     if (raw) return JSON.parse(raw);
   } catch {}
-  return { seeds: shuffleTeams(), winners: {} };
+  return { seeds: shuffleTeams(), winners: {}, maps: randomMaps() };
 }
 
 function saveState(s: BracketState) {
@@ -32,7 +32,7 @@ export default function Bracket() {
 
   function reset() {
     if (!confirm('Reset the entire bracket?')) return;
-    update({ seeds: shuffleTeams(), winners: {} });
+    update({ seeds: shuffleTeams(), winners: {}, maps: randomMaps() });
   }
 
   function pick(matchId: MatchId, team: string) {
@@ -118,6 +118,7 @@ export default function Bracket() {
                     team1={def.getTeam1(state)}
                     team2={def.getTeam2(state)}
                     winner={state.winners[id] ?? null}
+                    map={state.maps?.[id]}
                     onPick={pick}
                   />
                 );
